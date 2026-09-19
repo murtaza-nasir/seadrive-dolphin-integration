@@ -2,6 +2,11 @@
 
 Custom context menu integration for SeaDrive in KDE Dolphin file manager.
 
+> **Status: personal project, provided as-is.** I wrote this for my own use on my own
+> setup. It is published in case it is useful to someone else, but it comes with no
+> guarantee of support, maintenance, or future updates, and no warranty of any kind.
+> Issues and pull requests may go unanswered. Use at your own risk.
+
 ## Features
 
 Right-click context menu options for files/folders in SeaDrive:
@@ -167,8 +172,11 @@ path falls outside the client it belongs to.
 
 ## Contributing
 
-Pull requests welcome.
+Pull requests and issues are welcome, but see the status note at the top: this is a
+personal project and I make no commitment to review, respond, or merge. Forking is
+entirely reasonable if you need changes.
 
 ## License
 
-MIT
+MIT -- see [LICENSE](LICENSE). The software is provided "as is", without warranty of
+any kind.
