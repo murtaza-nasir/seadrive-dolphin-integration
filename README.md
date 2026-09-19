@@ -16,7 +16,22 @@ Right-click context menu options for files/folders in SeaDrive:
 ## Installation
 
 ```bash
-./install.sh
+./install.sh                    # current user
+sudo ./install.sh username      # another user
+```
+
+## After Installation
+
+1. Make sure SeaDrive is running and you are logged in
+2. Restart Dolphin (close all file manager windows and reopen)
+3. Navigate to `~/SeaDrive`
+4. Right-click any file or folder -- you should see the "SeaDrive" submenu
+
+## Uninstallation
+
+```bash
+./uninstall.sh                  # current user
+sudo ./uninstall.sh username    # another user
 ```
 
 ## Manual Installation
@@ -96,6 +111,63 @@ Check if SeaDrive GUI is running and the socket exists:
 ```bash
 ls -la ~/.seadrive/seadrive_ext.sock
 ```
+
+## Customization
+
+### Change the mount point
+
+If SeaDrive is mounted somewhere other than `~/SeaDrive`, edit `seadrive-cmd`:
+
+```python
+SEADRIVE_MOUNT = os.path.expanduser("~/SeaDrive")
+```
+
+### Add or remove menu items
+
+Edit `seadrive.desktop`. The `Actions=` line controls which actions appear; each
+has a corresponding `[Desktop Action X]` block.
+
+## Future Work: Seafile Sync Client Support
+
+This integration works only with **SeaDrive** (the FUSE virtual drive), not with the
+**Seafile sync client** (`seafile-applet` / `seaf-daemon`). Every command is sent to
+SeaDrive's extension socket, and `seadrive-cmd` rejects any path outside the SeaDrive
+mount.
+
+The sync client has no equivalent on Linux. It listens on
+`<worktree>/.seafile-data/seafile_client.sock`, but that is single-instance IPC only --
+`strings /usr/bin/seafile-applet` contains none of the extension verbs
+(`get-share-link`, `show-history`, `uncache`, ...) that `seadrive-gui` exports. Sending
+the same framed commands to it succeeds at the socket level and does nothing. Shell
+integration for the sync client exists only on Windows and macOS.
+
+A sync-client variant would therefore have to bypass the socket and work from the
+client's own SQLite databases plus the server's Web API:
+
+- `<worktree>/.seafile-data/repo.db` -- the `RepoProperty` table stores each library's
+  `worktree` and `server-url`, so a path maps to a repo id by longest-worktree-prefix
+  match (the same approach `get_repo_info()` uses against SeaDrive's `AccountRepos`).
+- `<worktree>/.seafile-data/accounts.db` -- the `Accounts` table holds the server URL
+  and an API token for authenticated calls.
+
+Feasibility per action:
+
+| Action | Sync client |
+| --- | --- |
+| View File History | Yes -- URL built from `repo.db`, no server call |
+| Copy Internal Link | Yes -- `/lib/<repo_id>/file/<path>`, no server call |
+| Copy Share Link | Yes -- `POST /api/v2.1/share-links/` with the stored token |
+| Lock / Unlock File | Yes -- `PUT /api2/repos/<repo_id>/file/`, `operation=lock` |
+| Download to Cache | N/A -- synced files are always local |
+| Evict from Cache | N/A -- same |
+
+Note that service menus cannot be filtered by path, so shipping both would show both
+submenus everywhere. The simplest fix is for each command to exit silently when the
+path falls outside the client it belongs to.
+
+## Contributing
+
+Pull requests welcome.
 
 ## License
 
