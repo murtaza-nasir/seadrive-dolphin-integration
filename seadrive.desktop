@@ -1,0 +1,43 @@
+[Desktop Entry]
+Type=Service
+MimeType=all/allfiles;inode/directory;
+X-KDE-ServiceTypes=KonqPopupMenu/Plugin
+X-KDE-Submenu=SeaDrive
+Icon=seadrive
+
+Actions=A;B;C;D;E;F;G
+
+[Desktop Action A]
+Name=Copy Share Link
+Icon=link
+Exec=/bin/bash -c 'python3 ~/.local/bin/seadrive-cmd get-share-link "$0"' %f
+
+[Desktop Action B]
+Name=Copy Internal Link
+Icon=link
+Exec=/bin/bash -c 'python3 ~/.local/bin/seadrive-cmd get-internal-link "$0"' %f
+
+[Desktop Action C]
+Name=Download to Cache
+Icon=download
+Exec=/bin/bash -c 'python3 ~/.local/bin/seadrive-cmd download "$0"' %f
+
+[Desktop Action D]
+Name=Evict from Cache
+Icon=edit-clear
+Exec=/bin/bash -c 'python3 ~/.local/bin/seadrive-cmd uncache "$0"' %f
+
+[Desktop Action E]
+Name=Lock File
+Icon=lock
+Exec=/bin/bash -c 'python3 ~/.local/bin/seadrive-cmd lock-file "$0"' %f
+
+[Desktop Action F]
+Name=Unlock File
+Icon=unlock
+Exec=/bin/bash -c 'python3 ~/.local/bin/seadrive-cmd unlock-file "$0"' %f
+
+[Desktop Action G]
+Name=View File History
+Icon=view-history
+Exec=/bin/bash -c 'python3 ~/.local/bin/seadrive-cmd show-history "$0"' %f
