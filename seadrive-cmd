@@ -112,7 +112,7 @@ def main():
         print("Usage: seadrive-cmd <command> [path]")
         print("Commands: get-share-link, get-internal-link, download, uncache,")
         print("          lock-file, unlock-file, show-history, show-accounts,")
-    print("          is-file-cached, is-file-in-repo")
+        print("          is-file-cached, is-file-in-repo")
         sys.exit(1)
 
     command = sys.argv[1]
