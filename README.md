@@ -14,8 +14,8 @@ Right-click context menu options for files/folders in SeaDrive:
 - **Copy Internal Link** - Get internal organization link
 - **Download to Cache** - Cache file locally
 - **Evict from Cache** - Remove from local cache
-- **Lock File** - Lock file for editing
-- **Unlock File** - Release file lock
+- **Lock File** - Lock file for editing (*Seafile Pro servers only*, see below)
+- **Unlock File** - Release file lock (*Seafile Pro servers only*, see below)
 - **View File History** - Open file revision history in browser
 
 ## Installation
@@ -86,6 +86,34 @@ kbuildsycoca6 --noincremental
 ### Plasma 6 Service Menu Bug
 
 In Plasma 6, service menu `.desktop` files **must be executable** (`chmod +x`), otherwise you'll get "You are not authorized to execute this file" error.
+
+### Lock / Unlock need a Seafile Pro server
+
+File locking is a server-side feature that Seafile only ships in the Professional
+edition. On Community Edition the lock request fails and SeaDrive shows
+**"Failed to lock file: Server Error"** (the GUI's log records an HTTP 500 from
+`/api2/repos/<id>/file/`). This is not something the menu can work around; the
+same thing happens with the official Windows shell extension against a CE server.
+If you are on CE, remove actions `E` and `F` from the `Actions=` line in
+`seadrive.desktop` to hide the two items.
+
+### Evict from Cache is silent
+
+Evicting works, but SeaDrive logs nothing for it (Download to Cache, by contrast,
+logs `Start to cache <path>` in `~/.seadrive/logs/seadrive.log`). To confirm the
+state of a file, ask SeaDrive directly:
+
+```bash
+seadrive-cmd is-file-cached ~/SeaDrive/My\ Libraries/SomeLibrary/somefile.txt
+# prints "cached" or "uncached"
+```
+
+### Copy Share Link opens an empty dialog on files with no link yet
+
+That action only *fetches* an existing share link. For a file that has none, SeaDrive
+opens its Share Link dialog with an empty field, plus password / expiry inputs and a
+**Generate link** button; click that to create one. Files that already have a link
+show it immediately.
 
 ### SeaDrive History URL Bug
 

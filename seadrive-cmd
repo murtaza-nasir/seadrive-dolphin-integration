@@ -88,10 +88,16 @@ def send_command(command: str, path: str = None) -> bool:
         data = cmd.encode('utf-8')
         sock.sendall(struct.pack('<I', len(data)) + data)
 
-        # Read response (even if empty, to complete the protocol)
+        # Read response (even if empty, to complete the protocol).
+        # Query commands (is-file-cached, is-file-in-repo, show-accounts)
+        # answer with a length-prefixed string; print it.
         sock.settimeout(2)
         try:
-            sock.recv(4096)
+            hdr = sock.recv(4)
+            if len(hdr) == 4:
+                n = struct.unpack('<I', hdr)[0]
+                if n:
+                    print(sock.recv(n).decode('utf-8', 'replace'))
         except socket.timeout:
             pass
 
@@ -105,7 +111,8 @@ def main():
     if len(sys.argv) < 2:
         print("Usage: seadrive-cmd <command> [path]")
         print("Commands: get-share-link, get-internal-link, download, uncache,")
-        print("          lock-file, unlock-file, show-history, show-accounts")
+        print("          lock-file, unlock-file, show-history, show-accounts,")
+    print("          is-file-cached, is-file-in-repo")
         sys.exit(1)
 
     command = sys.argv[1]
